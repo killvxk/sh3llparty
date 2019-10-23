@@ -136,8 +136,11 @@ def index():
 if __name__ == '__main__':
     db.create_all()
     db.session.commit()
-    args = {'host': '0.0.0.0',
-            'port': 8000}
-    if app.config["SSL"]:
-        args['ssl_context'] = (app.config["SSL_CERT"], app.config["SSL_KEY"])
-    app.run(**args)
+    if not app.config['USE_WSGI']:
+        args = {'host': app.config['LISTEN_ADDR'],
+                'port': app.config['LISTEN_PORT']}
+        if app.config["SSL"]:
+            args['ssl_context'] = (app.config["SSL_CERT"], app.config["SSL_KEY"])
+        app.run(**args)
+    else:
+        app.run()
